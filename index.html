@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    
+    <script type="text/javascript">
+	
+		function pageload()
+			{
+				let size = {
+					width: window.innerWidth || document.body.clientWidth,
+					height: (window.innerHeight || document.body.clientHeight) -56
+				}
+				document.getElementById("main_iframe").style.clip="rect(0,"+size.width+"px,"+size.height+"px,0)";
+				document.getElementById("div_iframe").style.height= size.height + 'px';
+				<!-- alert(size.height); -->
+			}
+
+        function set_iframe_src() {
+            let min3_src = "https://app.powerbi.cn/view?r=eyJrIjoiZjI0YTI1ZGItNTM5Yi00M2U2LWE0NjEtMWU4OGZhNzQ4ZjY3IiwidCI6IjY5NWNhMjczLThiODItNGM3MC1iZDUwLTQxYmFlN2Y1MGNmOSJ9";
+            let min3_login_src = "https://app.powerbi.cn/reportEmbed?reportId=6e6fafa1-08c8-42b0-8bce-d6bb77cb0f53&autoAuth=true&ctid=695ca273-8b82-4c70-bd50-41bae7f50cf9&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLW1jLWVhc3QyLWEtcHJpbWFyeS1yZWRpcmVjdC5hbmFseXNpcy5jaGluYWNsb3VkYXBpLmNuLyJ9";
+            let day_src = "https://app.powerbi.cn/view?r=eyJrIjoiNGE0ZDc3NGYtNGU1My00MmY4LWEyZTMtYjAzZmY3Njg2NmI3IiwidCI6IjY5NWNhMjczLThiODItNGM3MC1iZDUwLTQxYmFlN2Y1MGNmOSJ9";
+            let day_login_src = "https://app.powerbi.cn/reportEmbed?reportId=5887c318-c4a6-4fdf-b608-5166fa9bbbe4&autoAuth=true&ctid=695ca273-8b82-4c70-bd50-41bae7f50cf9&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLW1jLWVhc3QyLWEtcHJpbWFyeS1yZWRpcmVjdC5hbmFseXNpcy5jaGluYWNsb3VkYXBpLmNuLyJ9";
+
+            let btn_sel_login = document.getElementById("btn_sel_login");
+            let btn_sel_report = document.getElementById("btn_sel_report");
+            let main_iframe = document.getElementById("main_iframe");
+
+            if (btn_sel_login.innerText === "切换登录版" && btn_sel_report.innerText === "看更多数据") {
+                main_iframe.src = min3_src;
+            } else if (btn_sel_login.innerText === "切换登录版" && btn_sel_report.innerText === "看在线日报") {
+                main_iframe.src = day_src;
+            } else if (btn_sel_login.innerText === "切换免登录版" && btn_sel_report.innerText === "看更多数据") {
+                main_iframe.src = min3_login_src;
+            } else if (btn_sel_login.innerText === "切换免登录版" && btn_sel_report.innerText === "看在线日报") {
+                main_iframe.src = day_login_src;
+            }
+            // main_iframe.contentWindow.location.reload(true);
+        }
+
+        function my_refresh() {
+			pageload()
+            let btn = document.getElementById("btn_refresh");
+            let now = new Date();
+            let m = now.getMinutes();
+            let s = now.getSeconds();
+            if (btn.innerText === "停止自动刷新" && document.getElementById("btn_sel_report").innerText === "看更多数据") {
+                if ((m + 1) % 3 === 0 && s === 0) {
+                    set_iframe_src()
+                }
+            }
+        }
+
+        function click_btn_refresh() {
+            let btn = document.getElementById("btn_refresh");
+            if (btn.innerText === "停止自动刷新") {
+                btn.innerText = "开始自动刷新";
+				btn.classList.remove("selected");
+                btn.classList.add("un_selected");				
+                window.clearInterval()
+            } else {
+                btn.innerText = "停止自动刷新";
+                btn.classList.remove("un_selected");
+				btn.classList.add("selected");
+				set_iframe_src();
+                setInterval('my_refresh()', 1000);
+            }
+            // set_iframe_src();
+        }
+
+        function btn_sel_login() {
+            let btn = document.getElementById("btn_sel_login");
+            if (btn.innerText === "切换登录版") {
+                btn.innerText = "切换免登录版";
+                btn.classList.add("selected");
+            } else {
+                btn.innerText = "切换登录版";
+                btn.classList.remove("selected");
+            }
+            set_iframe_src();
+        }
+
+        function click_btn_sel_report() {
+            let btn = document.getElementById("btn_sel_report");
+			let tit =document.getElementById("id_title");
+            if (btn.innerText === "看更多数据") {
+                btn.innerText = "看在线日报";
+				tit.innerText = "更多数据";
+                btn.classList.add("selected");
+            } else {
+                btn.innerText = "看更多数据";
+				tit.innerText = "在线日报";
+                btn.classList.remove("selected");
+            }
+            set_iframe_src();
+        }
+
+		window.onload = pageload;
+
+		<!-- setInterval('my_refresh()', 1000); -->
+
+		<!-- alert("hell"); -->
+
+    </script>
+
+
+    <style>
+
+        body, iframe{
+            margin: 0;
+            padding: 0;
+        }
+
+        .main_iframe {
+			position:absolute;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+            border-style: none;
+            scrolling:auto;
+        }
+
+		.div_iframe{
+		    width: 100%;
+            height: 100vh;
+			z-index: 20;
+		}
+
+		.div_button{
+			position: relative;
+            width: 100%;
+			left:0;
+			<!-- height:60px; -->
+			padding-top:5px;
+			z-index: 300;
+			<!-- background-color:green; -->
+		}
+
+        button {
+            margin-left: 0.6%;
+            padding: 0.2%;
+            width: 8%;
+            border: 0;
+        }
+
+        .un_selected {
+            background-color: #2076E8;
+            color: white;
+        }
+
+        .selected {
+            background-color: #43C20A;
+            color: white;
+        }
+
+    </style>
+    <title id="id_title">在线日报</title>
+
+</head>
+
+
+<body>
+<div id="div_iframe" class="div_iframe">
+<iframe id="main_iframe" class="main_iframe"
+        src="https://app.powerbi.cn/view?r=eyJrIjoiZjI0YTI1ZGItNTM5Yi00M2U2LWE0NjEtMWU4OGZhNzQ4ZjY3IiwidCI6IjY5NWNhMjczLThiODItNGM3MC1iZDUwLTQxYmFlN2Y1MGNmOSJ9"
+>
+</iframe>
+</div>
+
+<div id="div_button" class="div_button" >
+    <span>&nbsp;&nbsp;&nbsp; </span>
+    <button id="btn_refresh" class="un_selected" onclick="click_btn_refresh()">开始自动刷新</button>
+    <button id="btn_sel_report" class="un_selected" onclick="click_btn_sel_report()">看更多数据</button>
+    <button id="btn_sel_login" class="un_selected" onclick="btn_sel_login()">切换登录版</button>
+    <span>&nbsp;&nbsp;&nbsp; 登录版（用户名：guoren@dafa004.partner.onmschina.cn 密码：Powerbi123）</span>
+
+</div>
+
+
+</body>
+
+</html>
